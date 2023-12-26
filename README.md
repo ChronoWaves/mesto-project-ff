@@ -1,2 +1,1 @@
-# Проектная работа Mesto
-
+https://github.com/ChronoWaves/mesto-project-ff
