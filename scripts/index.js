@@ -2,7 +2,7 @@ document.querySelector(".profile__add-button").onclick = function() {
   document.querySelector(".popup_type_new-card").classList.add("popup_is-opened")
 }
 
-document.querySelector(".popup__close").onclick = function() {
+document.querySelector("#popup__close-new").onclick = function() {
   document.querySelector(".popup_type_new-card").classList.remove("popup_is-opened")
 }
 
