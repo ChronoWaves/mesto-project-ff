@@ -1,35 +1,28 @@
-document.querySelector(".profile__add-button").onclick = function() {
+document.querySelector(".profile__add-button").addEventListener("click", function() {
   document.querySelector(".popup_type_new-card").classList.add("popup_is-opened")
-}
+})
 
-document.querySelector("#popup__close-new").onclick = function() {
+document.querySelector("#popup__close_new-card").addEventListener("click", function() {
   document.querySelector(".popup_type_new-card").classList.remove("popup_is-opened")
+})
+
+function deleteCard(event) {
+  event.target.closest(".places__item").remove()
 }
 
-document.querySelector(".places__list").onclick = function(event) {
-  const cardDelete = event.target.closest(".places__item")
-  cardDelete.remove()
+const cardTemplate = document.querySelector("#card-template").content;
+const cardContainer = document.querySelector(".places__list");
+
+function createCard(item, deleteCard) {
+    const cardContent = cardTemplate.querySelector(".card").cloneNode(true);
+    cardContent.querySelector(".card__title").textContent = item.name;
+    cardContent.querySelector(".card__image").src = item.link;
+    cardContent.querySelector(".card__image").alt = item.name;
+    cardContent.querySelector(".card__delete-button").addEventListener("click", deleteCard);
+    return cardContent;
 }
 
-const cardsTemplate = document.querySelector("#card-template").content;
-const cardsContainer = document.querySelector(".places__list");
-
-const cardsData = initialCards.map(function (item) {
-  return {
-    name: item.name,
-    link: item.link
-  };
+initialCards.forEach(function(item) {
+  const card = createCard(item, deleteCard);
+  cardContainer.append(card);
 });
-
-function renderCards({name, link}) {
-  const cardsContent = cardsTemplate.querySelector(".places__item").cloneNode(true);
-  cardsContent.querySelector(".card__title").textContent = name;
-  cardsContent.querySelector(".card__image").src = link;
-  cardsContainer.prepend(cardsContent);
-}
-
-function render() {
-  cardsData.forEach(renderCards);
-}
-
-render();
