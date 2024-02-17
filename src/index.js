@@ -2,7 +2,17 @@ import "./pages/index.css";
 import { cardContainer, createCard, deleteCard, likeCard } from "./components/card.js";
 import { initialCards } from "./components/cards.js";
 import { openModal, closeModal } from "./components/modal.js";
-import { formElement, profileAddButton, popupNewCard, popupEdit, popupCloseEdit, popupCloseNewCard, popupEditOverlayClose, popupNewCardOverlayClose, nameInput, jobInput, nameProfile, jobProfile, editProfileForm, addCardForm, InputCardName, inputCardUrl, popupCardImage, popupCloseImage, popupImageOverlayClose } from "./components/data.js";
+import { formElement, profileAddButton, popupNewCard, popupEdit, nameInput, jobInput, nameProfile, jobProfile, editProfileForm, addCardForm, InputCardName, inputCardUrl, popupCardImage, popups} from "./components/data.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
+
+export const validationConfig = {
+	formSelector: '.popup__form',
+	inputSelector: '.popup__input',
+	submitButtonSelector: '.popup__button',
+	inactiveButtonClass: 'popup__button_disabled',
+	inputErrorClass: 'popup__input_type_error',
+	errorClass: 'popup__error_visible'
+};
 
 function handleProfileFormSubmit(event) {
   event.preventDefault();
@@ -23,35 +33,13 @@ profileAddButton.addEventListener("click", function () {
   openModal(popupNewCard);
 });
 
-popupCloseEdit.addEventListener("click", function() {
-  closeModal(popupEdit)
-})
-
-popupCloseImage.addEventListener("click", function() {
-  closeModal(popupCardImage)
-})
-
-popupCloseNewCard.addEventListener("click", function() {
-  closeModal(popupNewCard)
-})
-
-popupEditOverlayClose.addEventListener("click", function (event) {
-  if (event.currentTarget === event.target) {
-    closeModal(popupEdit)
-  }
-})
-
-popupImageOverlayClose.addEventListener("click", function (event) {
-  if (event.currentTarget === event.target) {
-    closeModal(popupCardImage)
-  }
-})
-
-popupNewCardOverlayClose.addEventListener("click", function (event) {
-  if (event.currentTarget === event.target) {
-    closeModal(popupNewCard)
-  }
-})
+popups.forEach((popup) => {
+popup.addEventListener('click', (evt) => {
+if (evt.target === evt.currentTarget || evt.target.classList.contains('popup__close')){
+closeModal(popup);
+}
+});
+});
 
 function addNewCard(event) {
   event.preventDefault();
@@ -81,3 +69,5 @@ initialCards.forEach(function(item) {
   const card = createCard(item, deleteCard, likeCard, openCard);
   cardContainer.append(card);
 });
+
+enableValidation(validationConfig)
