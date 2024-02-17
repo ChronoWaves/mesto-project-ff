@@ -2,10 +2,10 @@ import "./pages/index.css";
 import { cardContainer, createCard, deleteCard, likeCard } from "./components/card.js";
 import { initialCards } from "./components/cards.js";
 import { openModal, closeModal } from "./components/modal.js";
-import { formElement, profileAddButton, popupNewCard, popupEdit, nameInput, jobInput, nameProfile, jobProfile, editProfileForm, addCardForm, InputCardName, inputCardUrl, popupCardImage, popups} from "./components/data.js";
+import { formElement, profileAddButton, popupNewCard, popupEdit, nameInput, jobInput, nameProfile, jobProfile, editProfileForm, addCardForm, InputCardName, inputCardUrl, popupCardImage, popups, editProfileAvatar, modalEditProfileAvatar, editProfileAvatarForm } from "./components/data.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
 
-export const validationConfig = {
+const validationConfig = {
 	formSelector: '.popup__form',
 	inputSelector: '.popup__input',
 	submitButtonSelector: '.popup__button',
@@ -21,21 +21,28 @@ function handleProfileFormSubmit(event) {
   closeModal(popupEdit);
 }
 
+editProfileAvatar.addEventListener("click", ()=> {
+  openModal(modalEditProfileAvatar)
+  clearValidation(editProfileAvatarForm, validationConfig)
+})
+
 editProfileForm.addEventListener('submit', handleProfileFormSubmit);
 
 formElement.addEventListener("click", function () {
   nameInput.value = nameProfile.textContent;
   jobInput.value = jobProfile.textContent;
   openModal(popupEdit);
+  clearValidation(editProfileForm, validationConfig)
 });
 
 profileAddButton.addEventListener("click", function () {
   openModal(popupNewCard);
+  clearValidation(addCardForm, validationConfig)
 });
 
 popups.forEach((popup) => {
-popup.addEventListener('click', (evt) => {
-if (evt.target === evt.currentTarget || evt.target.classList.contains('popup__close')){
+popup.addEventListener('click', (event) => {
+if (event.target === event.currentTarget || event.target.classList.contains('popup__close')){
 closeModal(popup);
 }
 });

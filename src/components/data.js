@@ -13,6 +13,7 @@ const jobProfile = document.querySelector(".profile__description");
 
 const editProfileForm = document.forms["edit-profile"];
 const addCardForm = document.forms["new-place"];
+const editProfileAvatarForm = document.forms["edit-avatar"]
 
 const InputCardName = document.querySelector(".popup__input_type_card-name")
 const inputCardUrl = document.querySelector(".popup__input_type_url")
@@ -21,4 +22,7 @@ const popupCardImage = document.querySelector(".popup_type_image")
 
 const popups = document.querySelectorAll('.popup');
 
-export { formElement, profileAddButton, popupNewCard, popupEdit, nameInput, jobInput, nameProfile, jobProfile, editProfileForm, addCardForm, InputCardName, inputCardUrl, popupCardImage, popups}
+const editProfileAvatar = document.querySelector(".profile__image")
+const modalEditProfileAvatar = document.querySelector(".popup_type_edit-avatar")
+
+export { formElement, profileAddButton, popupNewCard, popupEdit, nameInput, jobInput, nameProfile, jobProfile, editProfileForm, addCardForm, InputCardName, inputCardUrl, popupCardImage, popups, editProfileAvatar, modalEditProfileAvatar, editProfileAvatarForm}
