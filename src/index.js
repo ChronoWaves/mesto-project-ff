@@ -2,9 +2,9 @@ import "./pages/index.css";
 import { createCard, removeCard, likeCard} from "./components/card.js"
 import { openModal, closeModal} from "./components/modal.js"
 import { enableValidation, clearValidation } from "./components/validation.js";
-import { getInitialCards, getUserData, editUserData, editUserImage, card } from "./components/api.js"
-import { editButtonOpen, editModal, editButtonClose, editForm, editInputName, editInputDescription, profileTitle, profileDescription, editModalSaveButton, avatarModal, profileImage,
-  avatarForm, avatarInput, avatarCloseButton, avatarModalSaveButton, addModal, addButtonOpen, addForm, addInputName, addInputUrl, addModalSaveButton, addButtonClose, imageModal,
+import { getInitialCards, getUserData, editUserData, editUserImage, creatureCard } from "./components/api.js"
+import { buttonOpenEditProfileForm, editModal, buttonCloseEditProfileForm, formEditProfile, editInputName, editInputDescription, profileTitle, profileDescription, editModalSaveButton, avatarModal, profileImage,
+  avatarForm, avatarInput, buttonCloseUpdateAvatarForm, avatarModalSaveButton, addModal, buttonOpenAddCardForm, formAddCard, addInputName, addInputUrl, addModalSaveButton, buttonCloseAddCardForm, imageModal,
   imageButtonClose, imageCard, imageCaption, placesList } from "./components/data.js"
 
 let userId;
@@ -18,14 +18,14 @@ const validationConfig = {
 	errorClass: 'popup__error_visible'
 };
 
-editButtonOpen.addEventListener('click', function() {
+buttonOpenEditProfileForm.addEventListener('click', function() {
 	openModal(editModal);
 	editInputName.value = profileTitle.textContent;
 	editInputDescription.value = profileDescription.textContent;
-	clearValidation(editForm, validationConfig);
+	clearValidation(formEditProfile, validationConfig);
 });
 
-editButtonClose.addEventListener('click', function() {
+buttonCloseEditProfileForm.addEventListener('click', function() {
 	closeModal(editModal);
 });
 
@@ -35,15 +35,18 @@ function editFormSubmit(event) {
 	editUserData(editInputName.value, editInputDescription.value)
 	.then((data) => {
 		profileTitle.textContent = data.name;
-		profileDescription.textContent = data.description;
+		profileDescription.textContent = data.about;
 		closeModal(editModal);
+	})
+  .catch((error) => {
+		console.log(error);
 	})
 	.finally(() => {
 		editModalSaveButton.textContent = 'Сохранение';
 	})
 }
 
-editForm.addEventListener('submit', editFormSubmit);
+formEditProfile.addEventListener('submit', editFormSubmit);
 
 profileImage.addEventListener('click', () => {
 	avatarForm.reset();
@@ -51,52 +54,56 @@ profileImage.addEventListener('click', () => {
 	clearValidation(avatarForm, validationConfig);
 })
 
-avatarCloseButton.addEventListener('click', () => {
+buttonCloseUpdateAvatarForm.addEventListener('click', () => {
 	closeModal(avatarModal);
 })
 
 function avatarFormSubmit(event) {
 	event.preventDefault();
 	avatarModalSaveButton.textContent = 'Сохранение...';
-
 	editUserImage(avatarInput.value)
 	.then((data) => {
-		profileImage.style.backgroundImage = `url(${data.link})`;
+		profileImage.style.backgroundImage = `url(${data.avatar})`;
 		closeModal(avatarModal)
+	})
+  .catch((error) => {
+		console.log(error);
 	})
 	.finally(() => {
 		avatarModalSaveButton.textContent = 'Сохранение';
 	})
 }
 
-avatarForm.addEventListener('submit', avatarFormSubmit);
-
-addButtonOpen.addEventListener('click', function() {
-	addForm.reset();
-	openModal(addModal);
-	clearValidation(addForm, validationConfig);
-});
-
-addButtonClose.addEventListener('click', function() {
-	closeModal(addModal);
-});
-
 function addFormSubmit(event) {
 	event.preventDefault();
 	addModalSaveButton.textContent = 'Сохранение...';
-
-	card(addInputName.value, addInputUrl.value)
+	creatureCard(addInputName.value, addInputUrl.value)
 	.then((cardValue) => {
 		placesList.prepend(createCard(cardValue, userId, removeCard, likeCard, openImage));
-		addForm.reset();
+		formAddCard.reset();
 		closeModal(addModal);
+	})
+  .catch((error) => {
+		console.log(error);
 	})
 	.finally(() => {
 		addModalSaveButton.textContent = 'Сохранить';
 	})
 }
 
-addForm.addEventListener('submit', addFormSubmit);
+avatarForm.addEventListener('submit', avatarFormSubmit);
+
+buttonOpenAddCardForm.addEventListener('click', function() {
+	formAddCard.reset();
+	openModal(addModal);
+	clearValidation(formAddCard, validationConfig);
+});
+
+buttonCloseAddCardForm.addEventListener('click', function() {
+	closeModal(addModal);
+});
+
+formAddCard.addEventListener('submit', addFormSubmit);
 
 function openImage(cardValue) {
 	imageCaption.textContent = cardValue.name;
@@ -109,16 +116,18 @@ imageButtonClose.addEventListener('click', function() {
 	closeModal(imageModal);
 })
 
-enableValidation(validationConfig);
-
 Promise.all([getInitialCards(), getUserData()])
 .then(([initialCardsData, userData]) => {
-	userId = userData._id;
-	profileTitle.textContent = userData.name;
-	profileDescription.textContent = userData.about;
-	profileImage.style = `background-image: url('${userData.avatar}')`
-
-	initialCardsData.forEach((cardValue) => {
-		placesList.append(createCard(cardValue, userId, removeCard, likeCard, openImage));
-	})
+  userId = userData._id;
+  initialCardsData.forEach((cardValue) => {
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileImage.style = `background-image: url('${userData.avatar}')`;
+    placesList.append(createCard(cardValue, userId, removeCard, likeCard, openImage));
+  });
 })
+.catch((error) => {
+  console.log(error);
+});
+
+enableValidation(validationConfig);

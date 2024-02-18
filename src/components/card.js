@@ -1,4 +1,4 @@
-import { like, deleteCard, removeLike } from "./api";
+import { putLike, deleteCard, removeLike } from "./api";
 
 function createCard(cardValue, userId, removeCard, likeCard, openCard) {
     const cardTemplate = document.querySelector('#card-template').content;
@@ -38,6 +38,9 @@ function removeCard (event, cardValue) {
     .then (() => {
         card.remove();
     })
+    .catch((error) => {
+      console.log(error);
+  })
   }
 
 function liked(cardValue, userId) {
@@ -55,13 +58,19 @@ function likeCard (event, cardValue, userId) {
             likeButton.classList.remove('card__like-button_is-active');
             likeCount.textContent = res.likes.length;
         })
+        .catch((error) => {
+          console.log(error);
+      })
     } else {
-        like(cardValue._id)
+        putLike(cardValue._id)
         .then(res => {
             cardValue.likes = res.likes;
             likeButton.classList.add('card__like-button_is-active');
             likeCount.textContent = res.likes.length;
         })
+        .catch(error => {
+          console.log(error);
+      })
     }
 }
 
