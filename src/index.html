@@ -14,7 +14,7 @@
   </header>
   <main class="content">
     <section class="profile page__section">
-      <div class="profile__image" style="background-color: #fff"></div>
+      <div class="profile__image"></div>
       <div class="profile__info">
         <h1 class="profile__title"></h1>
         <button aria-label="Редактировать профиль" class="profile__edit-button" type="button"></button>
@@ -29,7 +29,7 @@
   </main>
   <footer class="footer page__section">
     <p class="footer__copyright">
-      © 2021 Mesto Russia
+      © 2024 Mesto Russia
     </p>
   </footer>
   <div class="popup popup_type_edit popup_is-animated">
@@ -41,14 +41,13 @@
           type="text"
           name="name"
           id="name-input"
-          class="popup__input popup__input_type_name" 
+          class="popup__input popup__input_type_name"
           placeholder="Имя"
           required
           minlength="2"
           maxlength="40"
           pattern="^[a-zA-Zа-яА-ЯёЁ\-\s]+$"
-          data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-        >
+          data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
         <span class="name-input-error"></span>
         <input
           type="text"
@@ -60,8 +59,7 @@
           minlength="2"
           maxlength="200"
           pattern="^[a-zA-Zа-яА-ЯёЁ\-\s]+$"
-          data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-        >
+          data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
         <span class="description-input-error"></span>
         <button type="submit" class="button popup__button">Сохранить</button>
       </form>
@@ -77,22 +75,20 @@
           name="place-name"
           id="card-name"
           class="popup__input popup__input_type_card-name"
-          placeholder="Название" 
+          placeholder="Название"
           required
           minlength="2"
           maxlength="30"
           pattern="^[a-zA-Zа-яА-ЯёЁ\-\s]+$"
-          data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
-        >
+          data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
         <span class="card-name-error"></span>
-        <input 
+        <input
           type="url"
           name="link"
           id="card-link"
           class="popup__input popup__input_type_url"
           placeholder="Ссылка на картинку"
-          required
-        >
+          required>
         <span class="card-link-error"></span>
         <button type="submit" class="button popup__button">Сохранить</button>
       </form>
@@ -112,12 +108,12 @@
     <button aria-label="Закрыть" type="button" class="popup__close"></button>
     <h3 class="popup__title">Обновить аватар</h3>
     <form class="popup__form" name="new-avatar" novalidate>
-      <input 
-        type="url" 
-        name="link" 
+      <input
+        type="url"
+        name="link"
         id="card-link"
-        class="popup__input popup__input_type_url" 
-        placeholder="Ссылка на картинку" 
+        class="popup__input popup__input_type_url"
+        placeholder="Ссылка на картинку"
         required
       >
       <span class="card-link-error"></span>
