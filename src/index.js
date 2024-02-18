@@ -1,9 +1,13 @@
 import "./pages/index.css";
-import { cardContainer, createCard, deleteCard, likeCard } from "./components/card.js";
-import { initialCards } from "./components/cards.js";
-import { openModal, closeModal } from "./components/modal.js";
-import { formElement, profileAddButton, popupNewCard, popupEdit, nameInput, jobInput, nameProfile, jobProfile, editProfileForm, addCardForm, InputCardName, inputCardUrl, popupCardImage, popups, editProfileAvatar, modalEditProfileAvatar, editProfileAvatarForm } from "./components/data.js";
+import { createCard, removeCard, likeCard} from "./components/card.js"
+import { openModal, closeModal} from "./components/modal.js"
 import { enableValidation, clearValidation } from "./components/validation.js";
+import { getInitialCards, getUserData, editUserData, editUserImage, card } from "./components/api.js"
+import { editButtonOpen, editModal, editButtonClose, editForm, editInputName, editInputDescription, profileTitle, profileDescription, editModalSaveButton, avatarModal, profileImage,
+  avatarForm, avatarInput, avatarCloseButton, avatarModalSaveButton, addModal, addButtonOpen, addForm, addInputName, addInputUrl, addModalSaveButton, addButtonClose, imageModal,
+  imageButtonClose, imageCard, imageCaption, placesList } from "./components/data.js"
+
+let userId;
 
 const validationConfig = {
 	formSelector: '.popup__form',
@@ -14,67 +18,107 @@ const validationConfig = {
 	errorClass: 'popup__error_visible'
 };
 
-function handleProfileFormSubmit(event) {
-  event.preventDefault();
-  nameProfile.textContent = nameInput.value;
-  jobProfile.textContent = jobInput.value;
-  closeModal(popupEdit);
+editButtonOpen.addEventListener('click', function() {
+	openModal(editModal);
+	editInputName.value = profileTitle.textContent;
+	editInputDescription.value = profileDescription.textContent;
+	clearValidation(editForm, validationConfig);
+});
+
+editButtonClose.addEventListener('click', function() {
+	closeModal(editModal);
+});
+
+function editFormSubmit(event) {
+	event.preventDefault();
+	editModalSaveButton.textContent = 'Сохранение...';
+	editUserData(editInputName.value, editInputDescription.value)
+	.then((data) => {
+		profileTitle.textContent = data.name;
+		profileDescription.textContent = data.description;
+		closeModal(editModal);
+	})
+	.finally(() => {
+		editModalSaveButton.textContent = 'Сохранение';
+	})
 }
 
-editProfileAvatar.addEventListener("click", ()=> {
-  openModal(modalEditProfileAvatar)
-  clearValidation(editProfileAvatarForm, validationConfig)
+editForm.addEventListener('submit', editFormSubmit);
+
+profileImage.addEventListener('click', () => {
+	avatarForm.reset();
+	openModal(avatarModal);
+	clearValidation(avatarForm, validationConfig);
 })
 
-editProfileForm.addEventListener('submit', handleProfileFormSubmit);
+avatarCloseButton.addEventListener('click', () => {
+	closeModal(avatarModal);
+})
 
-formElement.addEventListener("click", function () {
-  nameInput.value = nameProfile.textContent;
-  jobInput.value = jobProfile.textContent;
-  openModal(popupEdit);
-  clearValidation(editProfileForm, validationConfig)
-});
+function avatarFormSubmit(event) {
+	event.preventDefault();
+	avatarModalSaveButton.textContent = 'Сохранение...';
 
-profileAddButton.addEventListener("click", function () {
-  openModal(popupNewCard);
-  clearValidation(addCardForm, validationConfig)
-});
-
-popups.forEach((popup) => {
-popup.addEventListener('click', (event) => {
-if (event.target === event.currentTarget || event.target.classList.contains('popup__close')){
-closeModal(popup);
-}
-});
-});
-
-function addNewCard(event) {
-  event.preventDefault();
-  const titleInput = InputCardName.value
-  const linkInput = inputCardUrl.value
-  const newCard = {};
-  newCard.name = titleInput;
-  newCard.link = linkInput;
-  cardContainer.prepend(createCard(newCard, deleteCard, likeCard, openCard));
-  addCardForm.reset();
-  closeModal(popupNewCard);
+	editUserImage(avatarInput.value)
+	.then((data) => {
+		profileImage.style.backgroundImage = `url(${data.link})`;
+		closeModal(avatarModal)
+	})
+	.finally(() => {
+		avatarModalSaveButton.textContent = 'Сохранение';
+	})
 }
 
-addCardForm.addEventListener("submit", addNewCard);
+avatarForm.addEventListener('submit', avatarFormSubmit);
 
-function openCard(event) {
-  const openedCardImage = event.target;
-  const popupImage = document.querySelector(".popup__image")
-  const popupCaption = document.querySelector(".popup__caption")
-  popupImage.src = openedCardImage.src;
-  popupImage.alt = openedCardImage.alt;
-  popupCaption.textContent = openedCardImage.alt;
-  openModal(popupCardImage)
-}
-
-initialCards.forEach(function(item) {
-  const card = createCard(item, deleteCard, likeCard, openCard);
-  cardContainer.append(card);
+addButtonOpen.addEventListener('click', function() {
+	addForm.reset();
+	openModal(addModal);
+	clearValidation(addForm, validationConfig);
 });
 
-enableValidation(validationConfig)
+addButtonClose.addEventListener('click', function() {
+	closeModal(addModal);
+});
+
+function addFormSubmit(event) {
+	event.preventDefault();
+	addModalSaveButton.textContent = 'Сохранение...';
+
+	card(addInputName.value, addInputUrl.value)
+	.then((cardValue) => {
+		placesList.prepend(createCard(cardValue, userId, removeCard, likeCard, openImage));
+		addForm.reset();
+		closeModal(addModal);
+	})
+	.finally(() => {
+		addModalSaveButton.textContent = 'Сохранить';
+	})
+}
+
+addForm.addEventListener('submit', addFormSubmit);
+
+function openImage(cardValue) {
+	imageCaption.textContent = cardValue.name;
+	imageCard.alt = cardValue.name;
+	imageCard.src = cardValue.link;
+	openModal(imageModal);
+}
+
+imageButtonClose.addEventListener('click', function() {
+	closeModal(imageModal);
+})
+
+enableValidation(validationConfig);
+
+Promise.all([getInitialCards(), getUserData()])
+.then(([initialCardsData, userData]) => {
+	userId = userData._id;
+	profileTitle.textContent = userData.name;
+	profileDescription.textContent = userData.about;
+	profileImage.style = `background-image: url('${userData.avatar}')`
+
+	initialCardsData.forEach((cardValue) => {
+		placesList.append(createCard(cardValue, userId, removeCard, likeCard, openImage));
+	})
+})
